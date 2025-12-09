@@ -1,0 +1,232 @@
+.agenda-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 32px;
+  background: radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.08), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.12), transparent 40%),
+    #f5f7fb;
+}
+
+.toolbar-modern {
+  --background: linear-gradient(120deg, #4f46e5, #22c55e);
+  --color: #fff;
+  font-weight: 600;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 22px 20px 8px;
+  color: #0b1525;
+}
+
+.hero-text h1 {
+  margin: 4px 0 8px;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.hero-text .eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin: 0;
+}
+
+.hero-text .sub {
+  margin: 0;
+  color: #475569;
+}
+
+.hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: linear-gradient(140deg, rgba(79, 70, 229, 0.18), rgba(34, 197, 94, 0.12));
+  color: #1e293b;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+}
+
+.booking-card {
+  margin: 0 16px;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  background: #fff;
+}
+
+.booking-card ion-card-header {
+  padding-top: 20px;
+  padding-bottom: 0;
+}
+
+.booking-card ion-card-title {
+  font-weight: 800;
+  font-size: 22px;
+}
+
+.field-stack {
+  display: grid;
+  gap: 12px;
+}
+
+ion-item[fill="outline"] {
+  --inner-border-width: 1px;
+  --inner-box-shadow: none;
+  --highlight-height: 0;
+  --border-radius: 14px;
+  --background: #f8fafc;
+  --color: #0f172a;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 18px rgba(148, 163, 184, 0.12);
+}
+
+ion-item[fill="outline"] ion-icon {
+  color: #64748b;
+}
+
+.calendar-card {
+  margin: 18px 0;
+  padding: 16px 12px;
+  border: 1px dashed rgba(99, 102, 241, 0.3);
+  border-radius: 16px;
+  background: linear-gradient(140deg, rgba(99, 102, 241, 0.1), rgba(34, 197, 94, 0.07));
+  transition: opacity 200ms ease, filter 200ms ease;
+}
+
+.calendar-card.disabled {
+  opacity: 0.6;
+  filter: grayscale(0.2);
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.month-label {
+  font-weight: 700;
+  font-size: 18px;
+  color: #0b1525;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 13px;
+  color: #334155;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.calendar-legend .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.calendar-legend .available { background: #22c55e; }
+.calendar-legend .unavailable { background: #ef4444; }
+.calendar-legend .past { background: #94a3b8; }
+
+.calendar-grid {
+  --ion-grid-padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.2);
+}
+
+.weekday-row ion-col {
+  text-align: center;
+  font-weight: 700;
+  color: #94a3b8;
+  padding: 10px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 12px;
+}
+
+.week-row .day-cell {
+  padding: 0;
+}
+
+.day-btn {
+  width: 100%;
+  height: 64px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 0;
+  font-weight: 700;
+  color: #0f172a;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.day-btn.in-month.available {
+  background: rgba(34, 197, 94, 0.08);
+  color: #0f172a;
+}
+
+.day-btn.in-month.unavailable {
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+}
+
+.day-btn.past {
+  color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.day-btn.selected {
+  background: linear-gradient(135deg, #4f46e5, #22c55e);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+  transform: translateY(-1px);
+}
+
+.day-btn:disabled {
+  opacity: 0.65;
+}
+
+.day-btn .number {
+  font-size: 17px;
+}
+
+.error-text {
+  color: #dc2626;
+}
+
+ion-button {
+  --border-radius: 12px;
+  font-weight: 700;
+}
+
+ion-select::part(icon) {
+  color: #4f46e5;
+}
+
+@media (max-width: 540px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 18px 16px 10px;
+  }
+
+  .booking-card {
+    margin: 0 12px 24px;
+  }
+}

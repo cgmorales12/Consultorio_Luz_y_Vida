@@ -19,6 +19,14 @@ export class GestionCitasAdminPage implements OnInit {
   estadosCita: any[] = []; // Para llenar el selector de estado
   listaMedicos: any[] = []; // Para llenar el selector de médico
 
+  nuevaCita = {
+    cedula_paciente: '',
+    id_medico: null as number | null,
+    fecha_cita: '',
+    hora_cita: '',
+    motivo: '',
+  };
+
   // Modelo para la edición (se llena al hacer click en 'Editar')
   citaEnEdicion: any = null;
   
@@ -26,6 +34,7 @@ export class GestionCitasAdminPage implements OnInit {
   message: string | null = null;
   error: boolean = false;
   isSaving: boolean = false;
+  isCreating: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -49,7 +58,20 @@ export class GestionCitasAdminPage implements OnInit {
       { id: 4, nombre: 'Cita modificada Confirmada' },
       { id: 5, nombre: 'Cita modificada Rechazada' }
     ];
-    // NOTA: La lista de médicos ya la tienes en el servicio getMedicos(), deberías llamarla aquí.
+    this.loadMedicosList();
+  }
+
+  loadMedicosList() {
+    this.authService.getMedicos().subscribe({
+      next: (res: any) => {
+        if (res.status === 'success') {
+          this.listaMedicos = res.data || [];
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar médicos:', err);
+      }
+    });
   }
 
   // --- Consulta de Citas (CRUD: Read) ---
@@ -94,6 +116,35 @@ export class GestionCitasAdminPage implements OnInit {
     this.message = null;
     this.error = false;
   }
+
+  // --- Creación de Cita (CRUD: Create) ---
+  onCreateCita() {
+    this.isCreating = true;
+    this.message = 'Creando cita...';
+    this.error = false;
+
+    this.authService.agendarCita(this.nuevaCita).subscribe({
+      next: (res: any) => {
+        this.isCreating = false;
+        if (res.status === 'success') {
+          this.presentToast(res.message, 'success');
+          this.resetNuevaCita();
+          this.loadCitasList();
+          this.message = null;
+        } else {
+          this.message = res.message;
+          this.error = true;
+          this.presentToast(res.message, 'danger');
+        }
+      },
+      error: (err) => {
+        this.isCreating = false;
+        this.message = 'Error de conexión con el servidor al crear la cita.';
+        this.error = true;
+        console.error('Error al crear cita:', err);
+      }
+    });
+  }
   
   onUpdateCita() {
     this.isSaving = true;
@@ -108,6 +159,7 @@ export class GestionCitasAdminPage implements OnInit {
           this.presentToast(res.message, 'success');
           this.citaEnEdicion = null; // Cierra el formulario
           this.loadCitasList(); // Recarga la lista para ver los cambios
+          this.message = null;
         } else {
           this.presentToast(res.message, 'danger');
           this.error = true;
@@ -153,6 +205,7 @@ export class GestionCitasAdminPage implements OnInit {
         if (res.status === 'success') {
           this.presentToast(res.message, 'success');
           this.loadCitasList(); // Recargar la lista
+          this.message = null;
         } else {
           this.presentToast(res.message, 'danger');
           this.error = true;
@@ -169,6 +222,15 @@ export class GestionCitasAdminPage implements OnInit {
 
 
   // --- Utilidades ---
+  resetNuevaCita() {
+    this.nuevaCita = {
+      cedula_paciente: '',
+      id_medico: null,
+      fecha_cita: '',
+      hora_cita: '',
+      motivo: '',
+    };
+  }
   async presentToast(message: string, color: string = 'primary') {
     const toast = await this.toastController.create({
       message: message,

@@ -10,14 +10,14 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  
+
   <div class="ion-text-center" *ngIf="isLoading">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando estadísticas y datos de gestión...</p>
   </div>
-  
+
   <div *ngIf="!isLoading">
-    
+
     <ion-card color="tertiary">
       <ion-card-header>
         <ion-card-title>Ventana de Informativo</ion-card-title>
@@ -46,7 +46,7 @@
         </ion-grid>
       </ion-card-content>
     </ion-card>
-    
+
     <h3 class="ion-margin-top">Gestión Administrativa</h3>
 
     <ion-card>
@@ -54,7 +54,7 @@
         <ion-card-title>Gestión Médicos</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-button expand="block" color="primary" (click)="goToGestionMedicos('crear')">Crear Médico</ion-button>
+        <ion-button expand="block" color="primary" (click)="goToGestionMedicos('crear')">CREAR MÉDICOS</ion-button>
         <ion-button expand="block" color="secondary" (click)="goToGestionMedicos('modificar')">Modificar Médico</ion-button>
         <ion-button expand="block" color="danger" (click)="goToGestionMedicos('eliminar')">Eliminar Médico</ion-button>
       </ion-card-content>
@@ -70,15 +70,15 @@
         <ion-button expand="block" color="danger" (click)="goToGestionCitas('eliminar')">Eliminar Cita</ion-button>
       </ion-card-content>
     </ion-card>
-    
+
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Gestión Disponibilidad</ion-card-title>
+        <ion-card-title>Gestión Disponibilidad Médicos</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-button expand="block" color="primary" (click)="goToGestionDisponibilidad('crear')">Crear Disponibilidad</ion-button>
-        <ion-button expand="block" color="secondary" (click)="goToGestionDisponibilidad('modificar')">Modificar Disponibilidad</ion-button>
-        <ion-button expand="block" color="danger" (click)="goToGestionDisponibilidad('eliminar')">Eliminar Disponibilidad</ion-button>
+        <ion-button expand="block" color="primary" (click)="goToGestionDisponibilidad('crear')">CREAR DISPONIBILIDAD MÉDICOS</ion-button>
+        <ion-button expand="block" color="secondary" (click)="goToGestionDisponibilidad('modificar')">MODIFICAR DISPONIBILIDAD MÉDICOS</ion-button>
+        <ion-button expand="block" color="danger" (click)="goToGestionDisponibilidad('eliminar')">ELIMINAR DISPONIBILIDAD MÉDICOS</ion-button>
       </ion-card-content>
     </ion-card>
 
@@ -92,6 +92,6 @@
         <ion-button expand="block" color="danger" (click)="goToGestionLogin('eliminar')">Eliminar Usuario</ion-button>
       </ion-card-content>
     </ion-card>
-    
+
     </div>
 </ion-content>

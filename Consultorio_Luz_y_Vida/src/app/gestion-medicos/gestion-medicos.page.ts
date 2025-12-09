@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 
@@ -13,7 +13,7 @@ import { IonicModule, ToastController, AlertController } from '@ionic/angular';
   styleUrls: ['./gestion-medicos.page.scss'],
 })
 export class GestionMedicosPage implements OnInit {
-  
+
   accion: string = ''; // Recibe 'crear', 'modificar', 'eliminar'
   pageTitle: string = '';
 
@@ -30,7 +30,7 @@ export class GestionMedicosPage implements OnInit {
     telefono: ''
   };
 
-  listaMedicos: any[] = []; 
+  listaMedicos: any[] = [];
   isLoading: boolean = false;
   message: string | null = null;
   error: boolean = false;
@@ -38,7 +38,6 @@ export class GestionMedicosPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private router: Router,
     private toastController: ToastController,
     private alertController: AlertController
   ) { }
@@ -46,29 +45,29 @@ export class GestionMedicosPage implements OnInit {
   ngOnInit() {
     this.accion = this.route.snapshot.paramMap.get('accion') || 'crear';
     this.setPageTitle(this.accion);
-    
-    // Cargar lista si la acción es de consulta/modificación
-    if (this.accion === 'modificar' || this.accion === 'eliminar') {
-      this.loadMedicosList(); 
+
+    // Cargar lista si la acción es de consulta/modificación/eliminación
+    if (this.accion === 'modificar' || this.accion === 'eliminar' || this.accion === 'editar-form') {
+      this.loadMedicosList();
     }
   }
-  
+
   setPageTitle(accion: string) {
     switch(accion) {
       case 'crear':
-        this.pageTitle = 'Crear Nuevo';
+        this.pageTitle = 'CREAR MÉDICOS';
         break;
       case 'modificar':
-        this.pageTitle = 'Modificar Existente';
+        this.pageTitle = 'Modificar médico existente';
         break;
       case 'editar-form': // Modo de edición
-        this.pageTitle = 'Editar Médico';
+        this.pageTitle = 'Editar médico seleccionado';
         break;
       case 'eliminar':
-        this.pageTitle = 'Eliminar';
+        this.pageTitle = 'Eliminar médico';
         break;
       default:
-        this.pageTitle = 'Gestión';
+        this.pageTitle = 'Gestión de médicos';
     }
   }
 
@@ -85,7 +84,7 @@ export class GestionMedicosPage implements OnInit {
           this.listaMedicos = res.data || [];
           this.message = res.data.length > 0 ? null : res.message;
         } else {
-          this.message = res.message; 
+          this.message = res.message;
           this.error = true;
         }
       },
@@ -103,7 +102,7 @@ export class GestionMedicosPage implements OnInit {
     if (this.accion === 'crear') {
         this.createMedico();
     } else if (this.accion === 'editar-form') {
-        this.updateMedico(); 
+        this.updateMedico();
     }
   }
 
@@ -121,8 +120,9 @@ export class GestionMedicosPage implements OnInit {
           this.error = false;
           this.resetForm();
           this.presentToast('Médico creado exitosamente.', 'success');
+          this.loadMedicosList();
         } else {
-          this.message = res.message; 
+          this.message = res.message;
           this.error = true;
           this.presentToast(res.message, 'danger');
         }
@@ -135,13 +135,13 @@ export class GestionMedicosPage implements OnInit {
       }
     });
   }
-  
+
   // Lógica de Actualización (Llama a update_medico.php)
   updateMedico() {
     this.isLoading = true;
     this.message = 'Actualizando médico...';
     this.error = false;
-    
+
     const dataToSend = this.medico;
 
     this.authService.updateMedico(dataToSend).subscribe({
@@ -151,7 +151,10 @@ export class GestionMedicosPage implements OnInit {
                 this.message = res.message;
                 this.error = false;
                 this.presentToast('Actualización exitosa.', 'success');
-                this.router.navigate(['/sistema']); // Volver a la pantalla de sistema
+                this.accion = 'modificar';
+                this.setPageTitle(this.accion);
+                this.resetForm();
+                this.loadMedicosList();
             } else {
                 this.message = res.message;
                 this.error = true;
@@ -169,9 +172,9 @@ export class GestionMedicosPage implements OnInit {
 
   // Carga los datos del médico seleccionado en el formulario
   onEdit(medico: any) {
-    this.accion = 'editar-form'; 
+    this.accion = 'editar-form';
     this.setPageTitle('editar-form'); // Actualiza el título
-    
+
     // Mapear los datos al modelo 'medico'
     this.medico.id_medico = medico.id_medico;
     this.medico.id_usuario = medico.id_usuario;
@@ -184,6 +187,12 @@ export class GestionMedicosPage implements OnInit {
     this.medico.clave = ''; // Deja la clave vacía por seguridad
   }
 
+  cancelEdit() {
+    this.resetForm();
+    this.accion = 'modificar';
+    this.setPageTitle(this.accion);
+    this.message = null;
+  }
 
   // --- CRUD: Delete (Eliminación) ---
   async onDelete(medico: any) {
@@ -192,8 +201,8 @@ export class GestionMedicosPage implements OnInit {
       message: `¡ALERTA! ¿Está seguro de eliminar permanentemente al Dr(a). ${medico.nombres} ${medico.apellidos}?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { 
-          text: 'Eliminar', 
+        {
+          text: 'Eliminar',
           cssClass: 'danger',
           handler: () => {
             this.deleteMedico(medico.id_medico, medico.id_usuario);
@@ -209,9 +218,9 @@ export class GestionMedicosPage implements OnInit {
     this.message = 'Eliminando médico...';
     this.error = false;
 
-    const data = { 
-        id_medico: idMedico, 
-        id_usuario: idUsuario 
+    const data = {
+        id_medico: idMedico,
+        id_usuario: idUsuario
     };
 
     this.authService.deleteMedico(data).subscribe({
@@ -236,13 +245,13 @@ export class GestionMedicosPage implements OnInit {
         }
     });
   }
-  
+
   // --- Utilidades ---
-  
+
   resetForm() {
     this.medico = {
-      id_medico: 0, id_usuario: 0, usuario: '', clave: '', 
-      nombres: '', apellidos: '', especialidad: '', 
+      id_medico: 0, id_usuario: 0, usuario: '', clave: '',
+      nombres: '', apellidos: '', especialidad: '',
       cedula_profesional: '', telefono: ''
     };
   }

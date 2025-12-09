@@ -3,7 +3,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, ToastController } from '@ionic/angular';
-import { format } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isBefore,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
 import { AuthService } from '../services/auth';
 
 @Component({
@@ -25,12 +34,33 @@ export class AgendarCitaPage implements OnInit {
 
   medicos: any[] = []; // Lista de médicos disponibles para el select
   disponibilidad: any[] = []; // Bloques de horas disponibles (ej: 09:00, 10:00)
+  disponibilidadDias: Set<string> = new Set();
+  calendarioDias: {
+    date: Date;
+    iso: string;
+    label: number;
+    inMonth: boolean;
+    status: 'available' | 'unavailable' | 'past';
+  }[] = [];
+  semanasCalendario: {
+    date: Date;
+    iso: string;
+    label: number;
+    inMonth: boolean;
+    status: 'available' | 'unavailable' | 'past';
+  }[][] = [];
+  mesActual: Date = startOfMonth(new Date());
+  selectedDate: string | null = null;
 
   isLoading = false;
   isSaving = false;
   message: string | null = null;
   error: string | null = null;
   today: Date = new Date();
+
+  get mesActualLabel(): string {
+    return format(this.mesActual, 'LLLL yyyy');
+  }
 
   constructor(
     private authService: AuthService,
@@ -42,6 +72,7 @@ export class AgendarCitaPage implements OnInit {
   ngOnInit() {
     this.checkCedulaFromRoute();
     this.loadMedicosList();
+    this.actualizarCalendario();
   }
 
   // =================================================================
@@ -84,6 +115,14 @@ export class AgendarCitaPage implements OnInit {
     });
   }
 
+  onMedicoChange() {
+    this.cita.fecha_cita = '';
+    this.cita.hora_cita = '';
+    this.selectedDate = null;
+    this.disponibilidad = [];
+    this.cargarDisponibilidadMedico();
+  }
+
   // =================================================================
   // --- LÓGICA DE DISPONIBILIDAD ---
   // =================================================================
@@ -91,21 +130,17 @@ export class AgendarCitaPage implements OnInit {
   /**
    * Se ejecuta cuando el paciente selecciona una fecha en el ion-datetime.
    */
-  onDateChange(event: any) {
-    // 1. Reiniciar la disponibilidad y la hora seleccionada
+  onSeleccionFecha(day: { iso: string; status: string }) {
+    if (day.status !== 'available') {
+      this.presentToast('Seleccione una fecha habilitada en verde.', 'warning');
+      return;
+    }
+
     this.disponibilidad = [];
     this.cita.hora_cita = '';
-
-    // 2. Formatear la fecha seleccionada a YYYY-MM-DD
-    const rawDate = event.detail.value;
-    if (!rawDate) return;
-
-    this.cita.fecha_cita = format(new Date(rawDate), 'yyyy-MM-dd');
-
-    // 3. Cargar las horas disponibles para esa fecha
-    if (this.cita.fecha_cita) {
-      this.loadHorasDisponibles(this.cita.fecha_cita);
-    }
+    this.cita.fecha_cita = day.iso;
+    this.selectedDate = day.iso;
+    this.loadHorasDisponibles(this.cita.fecha_cita);
   }
 
   /**
@@ -114,7 +149,7 @@ export class AgendarCitaPage implements OnInit {
    */
   loadHorasDisponibles(fecha: string) {
     this.isLoading = true;
-    this.authService.getDisponibilidad(fecha).subscribe({
+    this.authService.getDisponibilidad(fecha, this.cita.id_medico ?? undefined).subscribe({
       next: (res: any) => {
         this.isLoading = false;
         if (res.status === 'success') {
@@ -130,6 +165,87 @@ export class AgendarCitaPage implements OnInit {
         this.presentToast('Error de conexión con el servidor de disponibilidad.', 'danger');
       },
     });
+  }
+
+  cargarDisponibilidadMedico() {
+    if (!this.cita.id_medico) {
+      this.disponibilidadDias = new Set();
+      this.actualizarCalendario();
+      return;
+    }
+
+    this.isLoading = true;
+    this.authService.getDisponibilidadByMedico(this.cita.id_medico).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        if (res.status === 'success') {
+          const dias = (res.data || []).map((bloque: any) =>
+            format(new Date(bloque.fecha_dia), 'yyyy-MM-dd')
+          );
+          this.disponibilidadDias = new Set(dias);
+        } else {
+          this.disponibilidadDias = new Set();
+          this.presentToast(res.message || 'No se pudo cargar la disponibilidad del médico.', 'warning');
+        }
+        this.actualizarCalendario();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.disponibilidadDias = new Set();
+        console.error('Error al cargar disponibilidad del médico:', err);
+        this.presentToast('Error al consultar la disponibilidad del médico.', 'danger');
+        this.actualizarCalendario();
+      },
+    });
+  }
+
+  moverMes(delta: number) {
+    this.mesActual = startOfMonth(addMonths(this.mesActual, delta));
+    this.actualizarCalendario();
+  }
+
+  actualizarCalendario() {
+    const inicioMes = startOfMonth(this.mesActual);
+    const finMes = endOfMonth(this.mesActual);
+    const inicioVista = startOfWeek(inicioMes, { weekStartsOn: 1 });
+    const finVista = endOfWeek(finMes, { weekStartsOn: 1 });
+
+    const dias: {
+      date: Date;
+      iso: string;
+      label: number;
+      inMonth: boolean;
+      status: 'available' | 'unavailable' | 'past';
+    }[] = [];
+
+    let cursor = inicioVista;
+    const hoy = format(new Date(), 'yyyy-MM-dd');
+
+    while (isBefore(cursor, addDays(finVista, 1))) {
+      const iso = format(cursor, 'yyyy-MM-dd');
+      const inMonth = cursor.getMonth() === inicioMes.getMonth();
+      const status: 'available' | 'unavailable' | 'past' = isBefore(cursor, new Date(hoy))
+        ? 'past'
+        : this.disponibilidadDias.has(iso)
+        ? 'available'
+        : 'unavailable';
+
+      dias.push({
+        date: cursor,
+        iso,
+        label: cursor.getDate(),
+        inMonth,
+        status,
+      });
+
+      cursor = addDays(cursor, 1);
+    }
+
+    this.calendarioDias = dias;
+    this.semanasCalendario = [];
+    for (let i = 0; i < dias.length; i += 7) {
+      this.semanasCalendario.push(dias.slice(i, i + 7));
+    }
   }
 
   // =================================================================

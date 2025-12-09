@@ -7,85 +7,106 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-card>
+<ion-content class="ion-padding page-background">
+  <div class="page-hero">
+    <div>
+      <p class="eyebrow">Tus datos quedan seguros</p>
+      <h2>Completa tu perfil para agendar tu primera cita</h2>
+      <p class="subtitle">Campos marcados con (*) son obligatorios</p>
+    </div>
+    <ion-icon name="heart-outline"></ion-icon>
+  </div>
+
+  <ion-card class="register-card">
     <ion-card-header>
       <ion-card-title class="ion-text-center">Formulario de Registro</ion-card-title>
-      <ion-card-subtitle class="ion-text-center">Llene todos los datos obligatorios (*)</ion-card-subtitle>
+      <ion-card-subtitle class="ion-text-center">Información básica del paciente</ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
-      <form (ngSubmit)="onRegister()" #registerForm="ngForm">
-        
-        <ion-item>
-          <ion-label position="floating">Cédula (*)</ion-label>
-          <ion-input type="text" [(ngModel)]="paciente.cedula" name="cedula" required maxlength="10"></ion-input>
-        </ion-item>
+      <form (ngSubmit)="onRegister()" #registerForm="ngForm" novalidate>
+        <ion-list lines="none" class="form-list">
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="card-outline"></ion-icon>
+            <ion-label position="stacked">Cédula (*)</ion-label>
+            <ion-input type="text" [(ngModel)]="paciente.cedula" name="cedula" required maxlength="10" placeholder="0000000000"></ion-input>
+          </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Nombres (*)</ion-label>
-          <ion-input type="text" [(ngModel)]="paciente.nombres" name="nombres" required></ion-input>
-        </ion-item>
-        
-        <ion-item>
-          <ion-label position="floating">Apellidos (*)</ion-label>
-          <ion-input type="text" [(ngModel)]="paciente.apellidos" name="apellidos" required></ion-input>
-        </ion-item>
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="person-outline"></ion-icon>
+            <ion-label position="stacked">Nombres (*)</ion-label>
+            <ion-input type="text" [(ngModel)]="paciente.nombres" name="nombres" required placeholder="Nombres completos"></ion-input>
+          </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Fecha de Nacimiento (*)</ion-label>
-          
-          <ion-input 
-            type="text" 
-            [ngModel]="paciente.fecha_nacimiento | date:'yyyy-MM-dd'" 
-            name="fecha_nacimiento_display" 
-            readonly>
-          </ion-input>
-          
-          <ion-datetime-button datetime="fechaNacimiento"></ion-datetime-button>
-        </ion-item>
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="people-outline"></ion-icon>
+            <ion-label position="stacked">Apellidos (*)</ion-label>
+            <ion-input type="text" [(ngModel)]="paciente.apellidos" name="apellidos" required placeholder="Apellidos completos"></ion-input>
+          </ion-item>
 
-        <ion-modal [keepContentsMounted]="true">
-          <ng-template>
-            <ion-datetime 
-              id="fechaNacimiento" 
-              presentation="date" 
-              [(ngModel)]="paciente.fecha_nacimiento" 
-              name="fecha_nacimiento" 
-              required
-              max="{{ getMaxDate() }}"
-              display-format="YYYY-MM-DD">
-            </ion-datetime>
-          </ng-template>
-        </ion-modal>
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="calendar-clear-outline"></ion-icon>
+            <ion-label position="stacked">Fecha de Nacimiento (*)</ion-label>
+            <div class="date-input-row">
+              <ion-input
+                class="date-preview"
+                type="text"
+                [ngModel]="paciente.fecha_nacimiento | date:'yyyy-MM-dd'"
+                name="fecha_nacimiento_display"
+                readonly
+                placeholder="Selecciona una fecha">
+              </ion-input>
+              <ion-datetime-button datetime="fechaNacimiento" color="primary"></ion-datetime-button>
+            </div>
+            <ion-note slot="helper">Usa el calendario para seleccionar la fecha rápidamente.</ion-note>
+          </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Teléfono</ion-label>
-          <ion-input type="tel" [(ngModel)]="paciente.telefono" name="telefono" maxlength="15"></ion-input>
-        </ion-item>
-        
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input type="email" [(ngModel)]="paciente.email" name="email"></ion-input>
-        </ion-item>
-        
-        <ion-item>
-          <ion-label position="floating">Dirección</ion-label>
-          <ion-input type="text" [(ngModel)]="paciente.direccion" name="direccion"></ion-input>
-        </ion-item>
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime
+                id="fechaNacimiento"
+                presentation="date"
+                [(ngModel)]="paciente.fecha_nacimiento"
+                name="fecha_nacimiento"
+                required
+                max="{{ getMaxDate() }}"
+                [showDefaultButtons]="true"
+                [preferWheel]="false"
+                color="primary">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
 
-        <ion-button 
-          expand="block" 
-          color="success" 
-          type="submit" 
-          class="ion-margin-top"
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="call-outline"></ion-icon>
+            <ion-label position="stacked">Teléfono</ion-label>
+            <ion-input type="tel" [(ngModel)]="paciente.telefono" name="telefono" maxlength="15" placeholder="0999999999"></ion-input>
+          </ion-item>
+
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="mail-unread-outline"></ion-icon>
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input type="email" [(ngModel)]="paciente.email" name="email" placeholder="correo@ejemplo.com"></ion-input>
+          </ion-item>
+
+          <ion-item class="input-item">
+            <ion-icon slot="start" name="home-outline"></ion-icon>
+            <ion-label position="stacked">Dirección</ion-label>
+            <ion-input type="text" [(ngModel)]="paciente.direccion" name="direccion" placeholder="Calle y número"></ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-button
+          expand="block"
+          type="submit"
+          class="submit-button"
           [disabled]="!registerForm.valid || isLoading">
           <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
           {{ isLoading ? 'Registrando...' : 'Registrar y Agendar Cita' }}
         </ion-button>
       </form>
-      
-      <p *ngIf="error" class="ion-text-center ion-padding-top" style="color: red;">
+
+      <p *ngIf="error" class="ion-text-center ion-padding-top error-text">
         {{ error }}
       </p>
     </ion-card-content>

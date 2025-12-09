@@ -18,11 +18,16 @@
 
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Registrar Nuevo Bloque de Horario</ion-card-title>
+      <ion-card-title>
+        {{ modoFormulario === 'editar' ? 'Editar bloque de horario' : 'Registrar Nuevo Bloque de Horario' }}
+      </ion-card-title>
+      <ion-card-subtitle *ngIf="modoFormulario === 'editar'">
+        Editando bloque del {{ nuevaDisponibilidad.fecha_dia | date: 'fullDate' }}
+      </ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <form (ngSubmit)="onCreateDisponibilidad()" #dispForm="ngForm">
-        
+      <form (ngSubmit)="onSubmitDisponibilidad()" #dispForm="ngForm">
+
         <ion-item>
           <ion-label position="floating">Día (*)</ion-label>
           <ion-input type="date" [(ngModel)]="nuevaDisponibilidad.fecha_dia" name="fecha_dia" [min]="minDate" required></ion-input>
@@ -38,14 +43,24 @@
           <ion-input type="time" [(ngModel)]="nuevaDisponibilidad.hora_fin" name="hora_fin" required></ion-input>
         </ion-item>
 
-        <ion-button 
-          expand="block" 
-          color="success" 
-          type="submit" 
+        <ion-button
+          expand="block"
+          color="success"
+          type="submit"
           class="ion-margin-top"
           [disabled]="!dispForm.valid || isSaving">
           <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-          {{ isSaving ? 'Guardando...' : 'Guardar Disponibilidad' }}
+          {{ modoFormulario === 'editar' ? (isSaving ? 'Actualizando...' : 'Actualizar bloque') : (isSaving ? 'Guardando...' : 'Guardar Disponibilidad') }}
+        </ion-button>
+
+        <ion-button
+          *ngIf="modoFormulario === 'editar'"
+          expand="block"
+          fill="outline"
+          color="medium"
+          type="button"
+          (click)="resetForm()">
+          Cancelar edición
         </ion-button>
       </form>
     </ion-card-content>
@@ -68,6 +83,9 @@
           </ion-item>
           
           <ion-item-options side="end">
+            <ion-item-option color="secondary" (click)="onEditDisponibilidad(bloque)">
+              <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-item-option>
             <ion-item-option color="danger" (click)="onDeleteDisponibilidad(bloque.id_disponibilidad)">
               <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
