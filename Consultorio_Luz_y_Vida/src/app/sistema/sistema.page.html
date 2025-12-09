@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Panel de Sistema</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="exit-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <div class="ion-text-center" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando estadísticas y datos de gestión...</p>
+  </div>
+  
+  <div *ngIf="!isLoading">
+    
+    <ion-card color="tertiary">
+      <ion-card-header>
+        <ion-card-title>Ventana de Informativo</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" class="ion-text-center">
+              <ion-icon name="pulse-outline" size="large"></ion-icon>
+              <h2>{{ stats.total_citas }}</h2>
+              <p>Total Citas</p>
+            </ion-col>
+            <ion-col size="6" class="ion-text-center">
+              <ion-icon name="people-outline" size="large"></ion-icon>
+              <h2>{{ stats.total_medicos }}</h2>
+              <p>Total Médicos</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" class="ion-text-center ion-margin-top">
+              <ion-icon name="calendar-outline" size="large"></ion-icon>
+              <h2>{{ stats.medicos_disponibles_hoy }}</h2>
+              <p>Médicos Disponibles Hoy</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+    
+    <h3 class="ion-margin-top">Gestión Administrativa</h3>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gestión Médicos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="primary" (click)="goToGestionMedicos('crear')">Crear Médico</ion-button>
+        <ion-button expand="block" color="secondary" (click)="goToGestionMedicos('modificar')">Modificar Médico</ion-button>
+        <ion-button expand="block" color="danger" (click)="goToGestionMedicos('eliminar')">Eliminar Médico</ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gestión Citas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="primary" (click)="goToGestionCitas('crear')">Crear Cita</ion-button>
+        <ion-button expand="block" color="secondary" (click)="goToGestionCitas('modificar')">Modificar Cita</ion-button>
+        <ion-button expand="block" color="danger" (click)="goToGestionCitas('eliminar')">Eliminar Cita</ion-button>
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gestión Disponibilidad</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="primary" (click)="goToGestionDisponibilidad('crear')">Crear Disponibilidad</ion-button>
+        <ion-button expand="block" color="secondary" (click)="goToGestionDisponibilidad('modificar')">Modificar Disponibilidad</ion-button>
+        <ion-button expand="block" color="danger" (click)="goToGestionDisponibilidad('eliminar')">Eliminar Disponibilidad</ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gestión Login (Usuarios)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="primary" (click)="goToGestionLogin('crear')">Crear Usuario</ion-button>
+        <ion-button expand="block" color="secondary" (click)="goToGestionLogin('modificar')">Modificar Usuario</ion-button>
+        <ion-button expand="block" color="danger" (click)="goToGestionLogin('eliminar')">Eliminar Usuario</ion-button>
+      </ion-card-content>
+    </ion-card>
+    
+    </div>
+</ion-content>

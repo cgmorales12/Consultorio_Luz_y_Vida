@@ -1,0 +1,107 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Agendar Nueva Cita</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Seleccione sus datos</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form (ngSubmit)="onAgendarCita()" #citaForm="ngForm">
+        
+        <ion-item>
+          <ion-label position="floating">Cédula del Paciente (*)</ion-label>
+          <ion-input 
+            type="text" 
+            [(ngModel)]="cita.cedula_paciente" 
+            name="cedula_paciente" 
+            required 
+            maxlength="10"
+            [disabled]="cita.cedula_paciente !== ''"> 
+            </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-select 
+            label="Seleccione Médico (*)" 
+            labelPlacement="floating" 
+            [(ngModel)]="cita.id_medico" 
+            name="id_medico" 
+            interface="popover" 
+            required
+            placeholder="Seleccione uno"
+          >
+            <ion-select-option *ngFor="let medico of medicos" [value]="medico.id_medico">
+              Dr(a). {{ medico.nombres }} {{ medico.apellidos }} ({{ medico.especialidad }})
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label>Fecha de la Cita (*)</ion-label>
+          <ion-datetime-button datetime="fechaCita"></ion-datetime-button>
+        </ion-item>
+
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+              id="fechaCita" 
+              [min]="(today | date:'yyyy-MM-dd')" 
+              (ionChange)="onDateChange($event)" 
+              name="fecha_cita" 
+              required
+            ></ion-datetime>
+          </ng-template>
+        </ion-modal>
+
+        <ion-item *ngIf="cita.fecha_cita && cita.id_medico">
+            <ion-select 
+              label="Horario Disponible (*)" 
+              labelPlacement="floating" 
+              [(ngModel)]="cita.hora_cita" 
+              name="hora_cita" 
+              interface="popover" 
+              required
+              placeholder="Seleccione hora"
+              [disabled]="disponibilidad.length === 0"
+            >
+              <ion-select-option *ngIf="disponibilidad.length === 0" [value]="null" disabled>
+                No hay horas disponibles para esta fecha.
+              </ion-select-option>
+              <ion-select-option *ngFor="let hora of disponibilidad" [value]="hora">
+                {{ hora }}
+              </ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Motivo de la Cita</ion-label>
+          <ion-textarea [(ngModel)]="cita.motivo" name="motivo" rows="3"></ion-textarea>
+        </ion-item>
+
+        <ion-button 
+          expand="block" 
+          color="primary" 
+          type="submit" 
+          class="ion-margin-top"
+          [disabled]="!citaForm.valid || isSaving">
+          <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+          {{ isSaving ? 'Agendando...' : 'Agendar Cita' }}
+        </ion-button>
+      </form>
+      
+      <p *ngIf="error" class="ion-text-center ion-padding-top" style="color: red;">
+        {{ error }}
+      </p>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,175 @@
+<ion-header translucent="true">
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center title-wrap">
+      <div class="subheadline">CONSULTORIO MÉDICO LUZ Y VIDA</div>
+      <div class="location-tag">Malchinguí, Ecuador</div>
+      <div class="headline">Registro de Citas</div>
+      <span class="subtitle prototype">PROTOTIPO</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        color="light"
+        fill="outline"
+        size="small"
+        class="login-btn"
+        (click)="goToLogin()"
+        routerLink="/login"
+        routerDirection="forward"
+      >
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Ingreso Personal
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding home-bg">
+  <div class="logo-banner">
+    <ion-img src="assets/medical-icon.svg" alt="Logo Consultorio Luz y Vida"></ion-img>
+  </div>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <h1 class="hero-title">Registro de Citas</h1>
+      <p class="lead">La disponibilidad de las citas dependerá de la agenda del médico, revisa los médicos disponibles y horarios.</p>
+
+      <div class="cta-column">
+        <div class="cta-block">
+          <p class="cta-label">REGISTRO PACIENTE NUEVO</p>
+          <ion-button
+            expand="block"
+            color="light"
+            fill="solid"
+            (click)="goToRegistro()"
+            routerLink="/registro-paciente"
+            routerDirection="forward"
+          >
+            <ion-icon name="person-add-outline" slot="start"></ion-icon>
+            REGÍSTRATE
+          </ion-button>
+        </div>
+
+        <div class="cta-block">
+          <p class="cta-label">PACIENTE REGISTRADO</p>
+          <ion-button
+            expand="block"
+            color="tertiary"
+            fill="outline"
+            (click)="goToAgendarCita()"
+            routerLink="/agendar-cita"
+            routerDirection="forward"
+          >
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            AGENDA O REVISA TU CITA
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-grid fixed class="sections-grid">
+    <ion-row>
+      <ion-col size="12" sizeLg="6">
+        <ion-card class="glass list-card themed-card">
+          <ion-card-header>
+            <div class="card-title-row">
+              <ion-card-title>Médicos disponibles</ion-card-title>
+              <ion-chip color="success" outline>
+                <ion-icon name="medical-outline"></ion-icon>
+                <ion-label>Actualizado</ion-label>
+              </ion-chip>
+            </div>
+            <ion-card-subtitle>Datos actualizados desde la base de datos</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="full">
+              <ion-item *ngFor="let medico of medicosDisponibles">
+                <ion-avatar slot="start" class="avatar-icon" [ngClass]="medico.genero === 'M' ? 'male' : 'female'">
+                  <ion-icon [name]="medico.genero === 'M' ? 'male-outline' : 'female-outline'"></ion-icon>
+                </ion-avatar>
+                <ion-label>
+                  <h3>{{ medico.genero === 'M' ? 'Dr. ' : 'Dra. ' }}{{ medico.nombre }}</h3>
+                  <p>{{ medico.especialidad }} · {{ medico.horario }}</p>
+                </ion-label>
+                <ion-badge [color]="medico.disponible ? 'success' : 'medium'">
+                  {{ medico.disponible ? 'Disponible' : 'En descanso' }}
+                </ion-badge>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" sizeLg="6">
+        <ion-card class="glass list-card themed-card">
+          <ion-card-header>
+            <div class="card-title-row">
+              <ion-card-title>Estado de citas recientes</ion-card-title>
+              <ion-chip color="tertiary" outline>
+                <ion-icon name="pulse-outline"></ion-icon>
+                <ion-label>Tiempo real</ion-label>
+              </ion-chip>
+            </div>
+            <ion-card-subtitle>Información actualizada desde la base de datos</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="full">
+              <ion-item *ngFor="let cita of citasRecientes">
+                <ion-icon slot="start" [name]="cita.icono" [color]="cita.color"></ion-icon>
+                <ion-label>
+                  <h3>{{ cita.paciente }}</h3>
+                  <p>{{ cita.detalle }}</p>
+                </ion-label>
+                <ion-chip [color]="cita.color" outline>
+                  <ion-label>{{ cita.estado }}</ion-label>
+                </ion-chip>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-card class="info-card glass reference-card themed-card">
+    <ion-card-header>
+      <ion-card-title>CONTACTOS</ion-card-title>
+      <ion-card-subtitle>CONSULTORIO MÉDICO LUZ Y VIDA</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-icon slot="start" name="location-outline"></ion-icon>
+          <ion-label>
+            <p class="label">Ubicación</p>
+            <h3>Malchinguí, Ecuador</h3>
+            <ion-button
+              fill="clear"
+              size="small"
+              color="light"
+              href="https://maps.google.com/?q=Malchingu%C3%AD,Ecuador"
+              target="_blank"
+            >
+              Ver en Google Maps
+            </ion-button>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="call-outline"></ion-icon>
+          <ion-label>
+            <p class="label">Contacto</p>
+            <h3>09-99999999</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="time-outline"></ion-icon>
+          <ion-label>
+            <p class="label">Horario</p>
+            <h3>Fin de semana y feriados</h3>
+            <p>Sábado 08:00 - Domingo 16:00 (según disponibilidad médica)</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,42 @@
+<ion-content class="ion-padding">
+  <ion-card *ngIf="accion === 'editar-form'">
+    <ion-card-header>
+      <ion-card-title>Editar Usuario: {{ usuarioEnEdicion.usuario }}</ion-card-title>
+      <ion-card-subtitle>Rol: {{ usuarioEnEdicion.nombre_rol }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+
+      <form (ngSubmit)="onUpdateUsuario()" #editUserForm="ngForm">
+
+        <ion-item>
+          <ion-label position="floating">Nuevo Nombre de Usuario (*)</ion-label>
+          <ion-input type="text" [(ngModel)]="usuarioEnEdicion.usuario" name="usuario" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Nueva Clave (Dejar vacío para no cambiar)</ion-label>
+          <ion-input type="password" [(ngModel)]="usuarioEnEdicion.clave" name="clave"></ion-input>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          color="secondary"
+          type="submit"
+          class="ion-margin-top"
+          [disabled]="!editUserForm.valid || isSaving">
+          <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+          {{ isSaving ? 'Guardando...' : 'Actualizar Usuario' }}
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" color="medium" (click)="accion='modificar'">
+          Cancelar Edición
+        </ion-button>
+
+      </form>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="accion !== 'crear' && accion !== 'editar-form'">
+  </ion-card>
+</ion-content>

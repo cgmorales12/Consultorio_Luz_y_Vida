@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/sistema"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión de Citas Administrativa</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <ion-text [color]="error ? 'danger' : 'success'" *ngIf="message || isLoading">
+    <p class="ion-text-center">
+      <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+      {{ message }}
+    </p>
+  </ion-text>
+  
+  <ion-card color="warning" *ngIf="citaEnEdicion">
+    <ion-card-header>
+      <ion-card-title>Modificar Cita #{{ citaEnEdicion.id_cita }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form (ngSubmit)="onUpdateCita()" #editCitaForm="ngForm">
+        
+        <ion-item>
+          <ion-label>Nueva Fecha</ion-label>
+          <ion-input type="date" [(ngModel)]="citaEnEdicion.fecha_cita" name="fecha_cita" required></ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label>Nueva Hora</ion-label>
+          <ion-input type="time" [(ngModel)]="citaEnEdicion.hora_cita" name="hora_cita" required></ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">Motivo</ion-label>
+          <ion-textarea [(ngModel)]="citaEnEdicion.motivo" name="motivo" rows="2"></ion-textarea>
+        </ion-item>
+        
+        <ion-item>
+          <ion-select label="Asignar Médico" [(ngModel)]="citaEnEdicion.id_medico" name="id_medico" required>
+            <ion-select-option [value]="citaEnEdicion.id_medico">Médico Actual (ID: {{ citaEnEdicion.id_medico }})</ion-select-option>
+            </ion-select>
+        </ion-item>
+        
+        <ion-item>
+          <ion-select label="Estado de Cita" [(ngModel)]="citaEnEdicion.id_estado" name="id_estado" required>
+             <ion-select-option *ngFor="let estado of estadosCita" [value]="estado.id">{{ estado.nombre }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <ion-button expand="block" color="secondary" type="submit" [disabled]="isSaving || !editCitaForm.valid" class="ion-margin-top">
+          <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+          {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" color="medium" (click)="citaEnEdicion=null">
+          Cancelar
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+  
+  <ion-card *ngIf="!citaEnEdicion"> 
+    <ion-card-header>
+      <ion-card-title>Listado General de Citas ({{ listaCitas.length }})</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      
+      <ion-list *ngIf="listaCitas.length > 0">
+        <ion-item-sliding *ngFor="let cita of listaCitas">
+          
+          <ion-item>
+            <ion-label>
+              <h2>Paciente: {{ cita.paciente_nombres }} {{ cita.paciente_apellidos }}</h2>
+              <p>Dr(a). {{ cita.medico_nombres }} {{ cita.medico_apellidos }}</p>
+              <p>Fecha/Hora: {{ cita.fecha_cita }} a las {{ cita.hora_cita }}</p>
+              <p>Estado: <strong>{{ cita.nombre_estado }}</strong></p>
+            </ion-label>
+          </ion-item>
+          
+          <ion-item-options side="end">
+            <ion-item-option color="secondary" (click)="onEdit(cita)">
+              <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="onDelete(cita)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+          
+        </ion-item-sliding>
+      </ion-list>
+      
+      <ion-text color="medium" class="ion-text-center" *ngIf="listaCitas.length === 0 && !isLoading && !message">
+        <p>No hay citas registradas en el sistema.</p>
+      </ion-text>
+      
+    </ion-card-content>
+  </ion-card>
+  
+</ion-content>
