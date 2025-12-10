@@ -60,7 +60,14 @@ export class RegistroPacientePage implements OnInit {
   onRegister() {
     this.isLoading = true;
     this.error = null;
-    
+
+    if (!this.paciente.fecha_nacimiento) {
+      this.isLoading = false;
+      this.error = 'La fecha de nacimiento es obligatoria.';
+      this.presentToast(this.error, 'danger');
+      return;
+    }
+
     // El formato de la fecha de ion-datetime debe ser compatible con MySQL (YYYY-MM-DD)
     // Usamos .slice(0, 10) para obtener 'YYYY-MM-DD' del string ISO8601 completo.
     const fechaFormateada = this.paciente.fecha_nacimiento.slice(0, 10);
