@@ -42,6 +42,7 @@ export class AuthService {
   // 4. SISTEMA: GESTIÓN DE DISPONIBILIDAD
   private createDisponibilidadUrl = this.buildUrl('/create_disponibilidad.php'); // CREATE Disponibilidad
   private getDisponibilidadMedicoUrl = this.buildUrl('/get_disponibilidad_medico.php'); // READ Bloques de Disponibilidad
+  private updateDisponibilidadUrl = this.buildUrl('/update_disponibilidad.php'); // UPDATE Disponibilidad
   private deleteDisponibilidadUrl = this.buildUrl('/delete_disponibilidad.php'); // DELETE Disponibilidad
 
   // 5. SISTEMA: GESTIÓN DE USUARIOS Y MÉDICOS (CRUD Administrativo)
@@ -83,8 +84,12 @@ export class AuthService {
   // =================================================================
   // --- MÓDULO 2: GESTIÓN DE CITAS Y DISPONIBILIDAD (PACIENTE Y MÉDICO) ---
   // =================================================================
-  getDisponibilidad(fecha: string): Observable<any> {
-    return this.http.get(`${this.getDisponibilidadUrl}?fecha=${fecha}`);
+  getDisponibilidad(fecha: string, id_medico?: number | null): Observable<any> {
+    const params = new URLSearchParams({ fecha });
+    if (id_medico) {
+      params.append('id_medico', String(id_medico));
+    }
+    return this.http.get(`${this.getDisponibilidadUrl}?${params.toString()}`);
   }
 
   agendarCita(citaData: any): Observable<any> {
@@ -129,7 +134,11 @@ export class AuthService {
   getDisponibilidadByMedico(id_medico: number): Observable<any> {
     return this.http.post(this.getDisponibilidadMedicoUrl, { id_medico: id_medico }, this.httpOptions);
   }
-  
+
+  updateDisponibilidad(disponibilidadData: any): Observable<any> {
+    return this.http.post(this.updateDisponibilidadUrl, disponibilidadData, this.httpOptions);
+  }
+
   deleteDisponibilidad(id_disponibilidad: number): Observable<any> {
     return this.http.post(this.deleteDisponibilidadUrl, { id_disponibilidad: id_disponibilidad }, this.httpOptions);
   }

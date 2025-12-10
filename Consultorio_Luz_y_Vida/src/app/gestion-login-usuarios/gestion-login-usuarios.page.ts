@@ -89,11 +89,10 @@ export class GestionLoginUsuariosPage implements OnInit {
           this.message = res.message;
           this.error = false;
           this.presentToast('Usuario creado.', 'success');
-          this.nuevoUsuario.usuario = ''; 
-          this.nuevoUsuario.clave = '';   
-          this.loadUsuariosList(); 
+          this.resetNuevoUsuario();
+          this.loadUsuariosList();
         } else {
-          this.message = res.message; 
+          this.message = res.message;
           this.error = true;
           this.presentToast(res.message, 'danger');
         }
@@ -219,10 +218,16 @@ export class GestionLoginUsuariosPage implements OnInit {
   onSelectAction(newAccion: string) {
     this.accion = newAccion;
     if (newAccion !== 'crear') {
-        this.loadUsuariosList(); 
+      this.loadUsuariosList();
+    } else {
+      this.resetNuevoUsuario();
     }
     this.message = null;
     this.error = false;
     this.usuarioEnEdicion = null; // Limpiar el modelo de edición
+  }
+
+  resetNuevoUsuario() {
+    this.nuevoUsuario = { usuario: '', clave: '' };
   }
 }
